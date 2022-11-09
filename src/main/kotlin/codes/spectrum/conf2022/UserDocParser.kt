@@ -29,11 +29,23 @@ class UserDocParser : IDocParser {
             return qualificationTests(input)
         }
 
-        /**
-         * Вот тут уже можете начинать свою реализацию боевого кода
-         */
+        return buildList {
+            if (input.matches(DocType.INN_UL.normaliseRegex)) {
+                val isValid = input
+                    .let {
+                        !it.startsWith("00") // остальные коды регионов - валидные или потенциально валидные
+                    }
 
-        return emptyList()
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.INN_UL,
+                        value = input,
+                        isValidSetup = true,
+                        isValid = isValid,
+                    ),
+                )
+            }
+        }
     }
 
     private fun qualificationTests(input: String): List<ExtractedDocument> {
