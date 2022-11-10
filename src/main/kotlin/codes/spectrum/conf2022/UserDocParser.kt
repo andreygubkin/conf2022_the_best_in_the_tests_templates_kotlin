@@ -12,6 +12,11 @@ import kotlin.random.Random
  */
 class UserDocParser : IDocParser {
     override fun parse(input: String): List<ExtractedDocument> {
+
+        if (input == "5050 909 012") {
+            println()
+        }
+
         /**
          * Это пример чтобы пройти совсем первый базовый тест, хардкод, но понятно API,
          * просто посмотрите preparedSampleTests для примера
