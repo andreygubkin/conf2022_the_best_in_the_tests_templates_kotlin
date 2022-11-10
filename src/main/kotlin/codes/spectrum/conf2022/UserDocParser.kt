@@ -40,6 +40,14 @@ class UserDocParser : IDocParser {
 
         val inputWithoutSpaces = input.normalizeSpaces()
 
+        fun String.myNormalizeSnils(): String {
+            return replace(" ", "").replace("-", "")
+        }
+
+        fun String.normalizeResultSnils(): String {
+            return "${substring(0..2)}-${substring(3..5)}-${substring(6..8)}-${substring(9..10)}"
+        }
+
         return buildList {
             if (input.matches(DocType.INN_UL.normaliseRegex)) {
 
@@ -180,6 +188,49 @@ class UserDocParser : IDocParser {
                     ),
                 )
             }
+
+            val myNormalizedSnils = input.myNormalizeSnils()
+
+            if (myNormalizedSnils.matches(SNILS_WITHOUT_SEPARATORS_REGEX)) {
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.SNILS,
+                        value = myNormalizedSnils.normalizeResultSnils(),
+                        isValidSetup = true,
+                        isValid = myNormalizedSnils
+                            .let { input ->
+                                input
+                                    .substring(0..8)
+                                    .mapIndexed { index, char ->
+                                        (char - '0') * SNILS_CONTROL_FACTORS[index]
+                                    }
+                                    .sum()
+                                    .let { sum ->
+                                        when {
+                                            sum < 100 -> {
+                                                sum
+                                            }
+                                            sum == 100 -> {
+                                                0
+                                            }
+                                            else -> {
+                                                (sum % 101).let {
+                                                    when (it) {
+                                                        100 -> {
+                                                            0
+                                                        }
+                                                        else -> {
+                                                            it
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            } == myNormalizedSnils.substring(9..10).toInt(),
+                    ),
+                )
+            }
         }.let {
             it.ifEmpty {
                 listOf(
@@ -279,6 +330,12 @@ class UserDocParser : IDocParser {
         private val INN_UL_CONTROL_FACTORS = listOf(
             2, 4, 10, 3, 5, 9, 4, 6, 8,
         )
+
+        private val SNILS_CONTROL_FACTORS = listOf(
+            9, 8, 7, 6, 5, 4, 3, 2, 1,
+        )
+
+        private val SNILS_WITHOUT_SEPARATORS_REGEX = """^\d{11}$""".toRegex()
 
         private val INN_FL_FIRST_CONTROL_FACTORS = listOf(
             7, 2, 4, 10, 3, 5, 9, 4, 6, 8,
