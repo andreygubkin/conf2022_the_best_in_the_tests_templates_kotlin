@@ -146,7 +146,7 @@ class UserDocParser : IDocParser {
                     .replace('C', 'С')
                     .replace('T', 'Т')
                     .replace('Y', 'У')
-                    .replace('X', 'Ч')
+                    .replace('X', 'Х')
             }
 
             if (inputWithoutSpaces.normalizeGrz().matches(DocType.GRZ.normaliseRegex)) {
