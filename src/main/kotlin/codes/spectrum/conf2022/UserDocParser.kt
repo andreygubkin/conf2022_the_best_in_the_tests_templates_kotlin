@@ -138,6 +138,20 @@ class UserDocParser : IDocParser {
                     ),
                 )
             }
+
+            if (inputWithoutSpaces.matches(DocType.VIN.normaliseRegex)) {
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.VIN,
+                        value = inputWithoutSpaces,
+                        isValidSetup = true,
+                        isValid = inputWithoutSpaces
+                            .let { input ->
+                                input.none { it == 'I' || it == 'O' || it == 'Q' }
+                            },
+                    ),
+                )
+            }
         }.let {
             it.ifEmpty {
                 listOf(
