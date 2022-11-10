@@ -33,6 +33,8 @@ class UserDocParser : IDocParser {
             return replace(" ", "")
         }
 
+        val inputWithoutSpaces = input.normalizeSpaces()
+
         return buildList {
             if (input.matches(DocType.INN_UL.normaliseRegex)) {
 
@@ -95,44 +97,39 @@ class UserDocParser : IDocParser {
                 )
             }
 
-            if (input
-                    .normalizeSpaces()
-                    .matches(DocType.PASSPORT_RF.normaliseRegex)
-            ) {
+            if (inputWithoutSpaces.matches(DocType.PASSPORT_RF.normaliseRegex)) {
                 add(
                     element = ExtractedDocument(
                         docType = DocType.PASSPORT_RF,
-                        value = input.normalizeSpaces(),
+                        value = inputWithoutSpaces,
                         isValidSetup = true,
                         isValid = true,
                     ),
                 )
             }
 
-            if (input
-                    .normalizeSpaces()
-                    .matches(DocType.DRIVER_LICENSE.normaliseRegex)
-            ) {
+            if (inputWithoutSpaces.matches(DocType.DRIVER_LICENSE.normaliseRegex)) {
                 add(
                     element = ExtractedDocument(
                         docType = DocType.DRIVER_LICENSE,
-                        value = input.normalizeSpaces(),
+                        value = inputWithoutSpaces,
                         isValidSetup = true,
                         isValid = true,
                     ),
                 )
             }
 
-            if (input
-                    .normalizeSpaces()
-                    .matches(DocType.GRZ.normaliseRegex)
-            ) {
+            if (inputWithoutSpaces.matches(DocType.GRZ.normaliseRegex)) {
                 add(
                     element = ExtractedDocument(
                         docType = DocType.GRZ,
-                        value = input.normalizeSpaces(),
+                        value = inputWithoutSpaces,
                         isValidSetup = true,
-                        isValid = true,
+                        isValid = inputWithoutSpaces
+                            .let { input ->
+                                input.substring(1..3).any { it != '0' }
+                                        && input.substring(6..7).any { it != '0' }
+                            },
                     ),
                 )
             }
