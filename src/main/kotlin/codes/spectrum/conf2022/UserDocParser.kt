@@ -59,7 +59,9 @@ class UserDocParser : IDocParser {
                         isValid = isValid,
                     ),
                 )
-            } else if (input.matches(DocType.INN_FL.normaliseRegex)) {
+            }
+
+            if (input.matches(DocType.INN_FL.normaliseRegex)) {
 
                 fun controlSumIsValid(inn12: String): Boolean {
                     return inn12
@@ -91,7 +93,9 @@ class UserDocParser : IDocParser {
                         isValid = isValid,
                     ),
                 )
-            } else if (input
+            }
+
+            if (input
                     .normalizeSpaces()
                     .matches(DocType.PASSPORT_RF.normaliseRegex)
             ) {
@@ -103,8 +107,24 @@ class UserDocParser : IDocParser {
                         isValid = true,
                     ),
                 )
-            } else {
+            }
+
+            if (input
+                    .normalizeSpaces()
+                    .matches(DocType.DRIVER_LICENSE.normaliseRegex)
+            ) {
                 add(
+                    element = ExtractedDocument(
+                        docType = DocType.DRIVER_LICENSE,
+                        value = input.normalizeSpaces(),
+                        isValidSetup = true,
+                        isValid = true,
+                    ),
+                )
+            }
+        }.let {
+            it.ifEmpty {
+                listOf(
                     element = ExtractedDocument(
                         docType = DocType.NOT_FOUND,
                     ),
