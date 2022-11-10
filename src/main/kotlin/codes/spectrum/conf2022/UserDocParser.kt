@@ -56,6 +56,40 @@ class UserDocParser : IDocParser {
                     ),
                 )
             }
+
+            if (input.matches(DocType.INN_FL.normaliseRegex)) {
+
+                fun controlSumIsValid(inn12: String): Boolean {
+                    return inn12
+                        .substring(0..9)
+                        .mapIndexed { index, char ->
+                            (char - '0') * INN_FL_FIRST_CONTROL_FACTORS[index]
+                        }
+                        .sum() % 11 % 10 == (input[10] - '0')
+                            &&
+                            inn12
+                                .substring(0..10)
+                                .mapIndexed { index, char ->
+                                    (char - '0') * INN_FL_SECOND_CONTROL_FACTORS[index]
+                                }
+                                .sum() % 11 % 10 == (input[11] - '0')
+                }
+
+                val isValid = input
+                    .let {
+                        !it.startsWith("00") // остальные коды регионов - валидные или потенциально валидные
+                                && controlSumIsValid(it)
+                    }
+
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.INN_FL,
+                        value = input,
+                        isValidSetup = true,
+                        isValid = isValid,
+                    ),
+                )
+            }
         }
     }
 
@@ -146,6 +180,14 @@ class UserDocParser : IDocParser {
     companion object {
         private val INN_UL_CONTROL_FACTORS = listOf(
             2, 4, 10, 3, 5, 9, 4, 6, 8,
+        )
+
+        private val INN_FL_FIRST_CONTROL_FACTORS = listOf(
+            7, 2, 4, 10, 3, 5, 9, 4, 6, 8,
+        )
+
+        private val INN_FL_SECOND_CONTROL_FACTORS = listOf(
+            3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8,
         )
     }
 }
