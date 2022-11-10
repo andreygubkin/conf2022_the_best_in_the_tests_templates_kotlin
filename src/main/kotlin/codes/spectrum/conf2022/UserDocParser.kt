@@ -132,11 +132,28 @@ class UserDocParser : IDocParser {
                 )
             }
 
-            if (inputWithoutSpaces.matches(DocType.GRZ.normaliseRegex)) {
+            fun String.normalizeGrz(): String {
+                return this
+                    .uppercase()
+                    .replace('A', 'А')
+                    .replace('B', 'В')
+                    .replace('E', 'Е')
+                    .replace('K', 'К')
+                    .replace('M', 'М')
+                    .replace('H', 'Н')
+                    .replace('O', 'О')
+                    .replace('P', 'Р')
+                    .replace('C', 'С')
+                    .replace('T', 'Т')
+                    .replace('Y', 'У')
+                    .replace('X', 'Ч')
+            }
+
+            if (inputWithoutSpaces.normalizeGrz().matches(DocType.GRZ.normaliseRegex)) {
                 add(
                     element = ExtractedDocument(
                         docType = DocType.GRZ,
-                        value = inputWithoutSpaces,
+                        value = inputWithoutSpaces.normalizeGrz(),
                         isValidSetup = true,
                         isValid = inputWithoutSpaces
                             .let { input ->
