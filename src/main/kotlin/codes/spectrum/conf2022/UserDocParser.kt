@@ -158,7 +158,8 @@ class UserDocParser : IDocParser {
                         isValid = inputWithoutSpaces
                             .let { input ->
                                 input.substring(1..3).any { it != '0' }
-                                        && input.substring(6..7).any { it != '0' }
+                                        && (input.length == 8 && input.substring(6..7).toInt() > 0
+                                        || input.length == 9 && input.substring(6..8).toInt() > 100)
                             },
                     ),
                 )
