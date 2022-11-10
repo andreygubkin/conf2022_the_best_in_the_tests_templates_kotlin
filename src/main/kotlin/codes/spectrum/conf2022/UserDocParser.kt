@@ -152,6 +152,34 @@ class UserDocParser : IDocParser {
                     ),
                 )
             }
+
+            if (inputWithoutSpaces.matches(DocType.OGRN.normaliseRegex)) {
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.OGRN,
+                        value = inputWithoutSpaces,
+                        isValidSetup = true,
+                        isValid = inputWithoutSpaces
+                            .let { input ->
+                                (input.substring(0..11).toLong() % 11 % 10).toInt() == (input[12] - '0')
+                            },
+                    ),
+                )
+            }
+
+            if (inputWithoutSpaces.matches(DocType.OGRNIP.normaliseRegex)) {
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.OGRNIP,
+                        value = inputWithoutSpaces,
+                        isValidSetup = true,
+                        isValid = inputWithoutSpaces
+                            .let { input ->
+                                (input.substring(0..13).toLong() % 13 % 10).toInt() == (input[14] - '0')
+                            },
+                    ),
+                )
+            }
         }.let {
             it.ifEmpty {
                 listOf(
