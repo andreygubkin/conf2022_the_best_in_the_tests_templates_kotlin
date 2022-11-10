@@ -29,6 +29,10 @@ class UserDocParser : IDocParser {
             return qualificationTests(input)
         }
 
+        fun String.normalizeSpaces(): String {
+            return replace(" ", "")
+        }
+
         return buildList {
             if (input.matches(DocType.INN_UL.normaliseRegex)) {
 
@@ -85,6 +89,18 @@ class UserDocParser : IDocParser {
                         value = input,
                         isValidSetup = true,
                         isValid = isValid,
+                    ),
+                )
+            } else if (input
+                    .normalizeSpaces()
+                    .matches(DocType.PASSPORT_RF.normaliseRegex)
+            ) {
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.PASSPORT_RF,
+                        value = input.normalizeSpaces(),
+                        isValidSetup = true,
+                        isValid = true,
                     ),
                 )
             } else {
