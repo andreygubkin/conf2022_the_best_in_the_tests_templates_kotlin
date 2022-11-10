@@ -122,6 +122,20 @@ class UserDocParser : IDocParser {
                     ),
                 )
             }
+
+            if (input
+                    .normalizeSpaces()
+                    .matches(DocType.GRZ.normaliseRegex)
+            ) {
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.GRZ,
+                        value = input.normalizeSpaces(),
+                        isValidSetup = true,
+                        isValid = true,
+                    ),
+                )
+            }
         }.let {
             it.ifEmpty {
                 listOf(
