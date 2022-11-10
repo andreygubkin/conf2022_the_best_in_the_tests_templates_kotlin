@@ -31,9 +31,20 @@ class UserDocParser : IDocParser {
 
         return buildList {
             if (input.matches(DocType.INN_UL.normaliseRegex)) {
+
+                fun controlSumIsValid(inn10: String): Boolean {
+                    return inn10
+                        .substring(0..8)
+                        .mapIndexed { index, char ->
+                            (char - '0') * INN_UL_CONTROL_FACTORS[index]
+                        }
+                        .sum() % 11 % 10 == (input.last() - '0')
+                }
+
                 val isValid = input
                     .let {
                         !it.startsWith("00") // остальные коды регионов - валидные или потенциально валидные
+                                && controlSumIsValid(it)
                     }
 
                 add(
@@ -130,5 +141,11 @@ class UserDocParser : IDocParser {
             "4" -> return listOf(ExtractedDocument(DocType.INN_UL, value = "3456709873"))
             else -> emptyList()
         }
+    }
+
+    companion object {
+        private val INN_UL_CONTROL_FACTORS = listOf(
+            2, 4, 10, 3, 5, 9, 4, 6, 8,
+        )
     }
 }
