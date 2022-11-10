@@ -55,9 +55,7 @@ class UserDocParser : IDocParser {
                         isValid = isValid,
                     ),
                 )
-            }
-
-            if (input.matches(DocType.INN_FL.normaliseRegex)) {
+            } else if (input.matches(DocType.INN_FL.normaliseRegex)) {
 
                 fun controlSumIsValid(inn12: String): Boolean {
                     return inn12
@@ -87,6 +85,12 @@ class UserDocParser : IDocParser {
                         value = input,
                         isValidSetup = true,
                         isValid = isValid,
+                    ),
+                )
+            } else {
+                add(
+                    element = ExtractedDocument(
+                        docType = DocType.NOT_FOUND,
                     ),
                 )
             }
